@@ -1,0 +1,88 @@
+{
+  "name": "teslams",
+  "version": "1.0.1",
+  "description": "Utilities for the Tesla Model S ",
+  "dependencies": {
+    "request": ">=2.14.0",
+    "optimist": "~0.3.5",
+    "open": "~0.0.3",
+    "multimeter-hj": "~0.1.2",
+    "mongodb": ">= 1.3.14",
+    "express": "= 3.*",
+    "express-namespace": "~0.1.1",
+    "passport": ">= 0.1.17",
+    "passport-local": ">= 0.1.6",
+    "json-bigint": ">= 0.1.4",
+    "pkginfo": "~0.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hjespers/teslams.git"
+  },
+  "main": "./teslams.js",
+  "directories": {
+    "lib": ".",
+    "example": "examples"
+  },
+  "bin": {
+    "teslacmd": "./examples/teslacmd.js",
+    "teslamap": "./examples/teslamap.js",
+    "streaming": "./examples/streaming.js",
+    "chargebar": "./examples/chargebar.js",
+    "climatemon": "./examples/climatemon.js",
+    "visualize": "./examples/visualize/visualize.js"
+  },
+  "keywords": [
+    "tesla"
+  ],
+  "author": {
+    "name": "Hans Jespersen",
+    "email": "hans.jespersen@gmail.com",
+    "url": "https://github.com/hjespers/teslams"
+  },
+  "contributors": [
+    {
+      "name": "Marshall Rose",
+      "url": "https://github.com/mrose17"
+    },
+    {
+      "name": "Dirk Hohndel",
+      "url": "https://github.com/dirkhh"
+    },
+    {
+      "name": "Arthur Blake",
+      "url": "https://github.com/arthurblake"
+    }
+  ],
+  "license": "BSD",
+  "gitHead": "ba64652c841d24d80dc2d5f49dfd2434eece2cf6",
+  "bugs": {
+    "url": "https://github.com/hjespers/teslams/issues"
+  },
+  "homepage": "https://github.com/hjespers/teslams#readme",
+  "_id": "teslams@1.0.1",
+  "_shasum": "66fa28b0c22a46ccaf6278f0e2dfe3c0dd2388c5",
+  "_from": "teslams@*",
+  "_npmVersion": "2.11.1",
+  "_nodeVersion": "0.10.25",
+  "_npmUser": {
+    "name": "hjespers",
+    "email": "hans.jespersen@gmail.com"
+  },
+  "dist": {
+    "shasum": "66fa28b0c22a46ccaf6278f0e2dfe3c0dd2388c5",
+    "tarball": "http://registry.npmjs.org/teslams/-/teslams-1.0.1.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "hjespers",
+      "email": "hans.jespersen@gmail.com"
+    }
+  ],
+  "_resolved": "https://registry.npmjs.org/teslams/-/teslams-1.0.1.tgz",
+  "readme": "ERROR: No README data found!"
+}
