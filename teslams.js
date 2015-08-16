@@ -81,7 +81,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
         } else {
             data = data.response[0];
             if (data != null) {
-                var vehicleId = JSONbig.stringify(data.vehicle_id);
+                var vehicleId = JSONbig.stringify(data.id);
                 var vehicleToken = data.tokens[0];
                 cb(null, vehicleId, vehicleToken);        
             } else {
