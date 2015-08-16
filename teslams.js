@@ -83,7 +83,8 @@ exports.getVehicleTokens = function(bearerToken, cb) {
             if (data != null) {
                 var vehicleId = JSONbig.stringify(data.id);
                 var vehicleToken = data.tokens[0];
-                cb(null, vehicleId, vehicleToken);        
+                var streamId = JSONbig.stringify(data.vehicle_id);
+                cb(null, vehicleId, vehicleToken, streamId);        
             } else {
                 cb("error getting vehicle tokens");
             }
@@ -153,7 +154,6 @@ exports.get_vid = function(options, cb) {
 
 
 function mobile_enabled( bearerToken, vid, cb ) {
-    console.log("TeslaMS - Trying to get mobile access for bearer: " + bearerToken + " and vid: " + vid);
     request( {
         method: 'GET',
         url:  portal + '/vehicles/' + vid + '/mobile_enabled', 
