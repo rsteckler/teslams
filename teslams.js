@@ -153,6 +153,7 @@ exports.get_vid = function(options, cb) {
 
 
 function mobile_enabled( bearerToken, vid, cb ) {
+    console.log("TeslaMS - Trying to get mobile access for bearer: " + bearerToken + " and vid: " + vid);
     request( {
         method: 'GET',
         url:  portal + '/vehicles/' + vid + '/mobile_enabled', 
