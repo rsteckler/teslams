@@ -154,15 +154,11 @@ exports.get_vid = function(options, cb) {
 
 
 function mobile_enabled( bearerToken, vid, cb ) {
-    console.log("mobile enabled call with token: " + bearerToken + " and vid: " + vid);
     request( {
         method: 'GET',
         url:  portal + '/vehicles/' + vid + '/mobile_enabled', 
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
     }, function (error, response, body) { 
-        console.log("mobile err: " + error);
-        console.log("mobile status: " + response.statusCode);
-        console.log("mobile body: " + util.inspect(body));
         if ((!!error) || (response.statusCode !== 200)) return report(error, response, body, cb);
         try {
             var data = JSON.parse(body); 
