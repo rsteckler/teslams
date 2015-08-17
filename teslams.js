@@ -19,7 +19,9 @@ var locale = 'en_US';
 var user_agent = 'Model S ' + version + ' (' + model + '; Android ' + codename + ' ' + release + '; ' + locale + ')';
 
 var report = function(error, response, body, cb) {
-  if (!!cb) cb(error || (new Error(response.statusCode + ': ' + body)), body);
+    if (!!cb) {
+        cb(response.statusCode, body);
+    }
 };
 var report2 = function(call, body, cb) {
   if (typeof cb === 'function') cb(new Error('expecting JSON response to ' + call + ' request'), body);
