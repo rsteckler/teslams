@@ -29,7 +29,9 @@ var report = function(error, response, body, cb) {
     }
 };
 var report2 = function(call, body, cb) {
-  if (typeof cb === 'function') cb(new Error('expecting JSON response to ' + call + ' request'), body);
+    if (typeof cb === 'function') {
+        cb(500, body);
+    }
 };
 
 
