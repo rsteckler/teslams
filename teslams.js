@@ -184,7 +184,7 @@ function mobile_enabled( bearerToken, vid, cb ) {
             }
             else return true;
         } catch (err) {
-             console.log("WTF Couldn't parse body: " + body);
+             console.log("WTF Couldn't parse body: " + body + err);
             return report2('mobile_enabled', body, cb);
         }
     });
