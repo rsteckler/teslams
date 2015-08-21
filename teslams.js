@@ -83,12 +83,12 @@ exports.getVehicleTokens = function(bearerToken, cb) {
         catch(err) { 
             console.log('login failed\nerr: ' + util.inspect(err) + '\nbody: ' + body); 
             console.log("request data: " + util.inspect(requestData));
-            return cb("Error getting vehicle tokens.");
+            return cb("Error getting vehicle tokens.  Login failed.");
         }
         
         if (!util.isArray(data.response)) {
             console.log('expecting an array from Tesla Motors cloud service:' + util.inspect(data.response));
-            cb("Error getting vehicle tokens.");
+            cb("Error getting vehicle tokens.  Not an array.");
         } else {
             data = data.response[0];
             if (data != null) {
@@ -97,7 +97,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
                 var streamId = JSONbig.stringify(data.vehicle_id);
                 cb(null, vehicleId, vehicleToken, streamId);        
             } else {
-                cb("error getting vehicle tokens");
+                cb("error getting vehicle tokens.  Data was null.");
             }
         }
     });
