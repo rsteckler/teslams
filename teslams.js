@@ -175,18 +175,16 @@ function mobile_enabled( bearerToken, vid, cb ) {
     }, function (error, response, body) { 
         if ((!!error) || (response.statusCode !== 200)) return report(error, response, body, cb);
         try {
-             console.log("WTF Trying to parse body: " + body);
             var data = JSON.parse(body); 
-             console.log("WTF Parsed body: " + body);
-            if (typeof cb == 'function') {
-                 console.log("WTF Returning the data: " + body);
-                return cb( null, data.response );  
-            }
-            else return true;
         } catch (err) {
-             console.log("WTF Couldn't parse body: " + body + err);
             return report2('mobile_enabled', body, cb);
         }
+        
+        if (typeof cb == 'function') {
+            return cb( null, data.response );  
+        }
+        else return true;
+
     });
 }
 exports.mobile_enabled = mobile_enabled;
