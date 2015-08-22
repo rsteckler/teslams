@@ -88,7 +88,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
         
         if (!util.isArray(data.response)) {
             console.log('expecting an array from Tesla Motors cloud service:' + util.inspect(data.response));
-            cb("Error getting vehicle tokens.  Not an array.");
+            cb("Error getting vehicle tokens.  Not an array. Body: " + body);
         } else {
             data = data.response[0];
             if (data != null) {
@@ -97,7 +97,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
                 var streamId = JSONbig.stringify(data.vehicle_id);
                 cb(null, vehicleId, vehicleToken, streamId);        
             } else {
-                cb("error getting vehicle tokens.  Data was null.");
+                cb("error getting vehicle tokens.  Data was null. Body: " + body);
             }
         }
     });
