@@ -308,8 +308,8 @@ function open_charge_port( bearerToken, vid, cb ) {
     request( {
         method: 'POST', 
         gzip: true,
-        url: portal + '/vehicles/' + bearerToken + '/command/charge_port_door_open', 
-        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+        url: portal + '/vehicles/' + vid + '/command/charge_port_door_open', 
+        headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
     }, function (error, response, body) { 
         if ((!!error) || (response.statusCode !== 200)) return report(error, response, body, cb);
         try {
