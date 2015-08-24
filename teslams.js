@@ -311,12 +311,25 @@ function open_charge_port( bearerToken, vid, cb ) {
         url: portal + '/vehicles/' + vid + '/command/charge_port_door_open', 
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
     }, function (error, response, body) { 
-        if ((!!error) || (response.statusCode !== 200)) return report(error, response, body, cb);
+        console.log("TEMPORARL charge port body: " + body);
+        if ((!!error) || (response.statusCode !== 200)) {
+            console.log("TEMPORARL charge port response code: " + response.statusCode);
+            return report(error, response, body, cb);
+        }
         try {
+            console.log("TEMPORARL charge port parsing");
             var data = JSON.parse(body); 
-            if (typeof cb == 'function') return cb( null, data.response );  
-            else return true;
+            console.log("TEMPORARL charge port parsed");
+            if (typeof cb == 'function') {
+
+                console.log("TEMPORARL charge port good");
+                return cb( null, data.response );  
+            } else {
+                console.log("TEMPORARL charge port no callback");
+                return true;
+            }
         } catch (err) {
+            console.log("TEMPORARL charge port bad");
             return report2('charge_port_door_open', body, cb);
         }
     });
