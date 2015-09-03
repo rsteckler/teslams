@@ -81,8 +81,6 @@ exports.getVehicleTokens = function(bearerToken, cb) {
         var data;
         try { data = JSONbig.parse(body); } 
         catch(err) { 
-            console.log('login failed\nerr: ' + util.inspect(err) + '\nbody: ' + body); 
-            console.log("request data: " + util.inspect(requestData));
             return cb("Error getting vehicle tokens.  Login failed.");
         }
         
