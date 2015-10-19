@@ -1,0 +1,9 @@
+language: node_js
+
+node_js:
+  - 0.10.33
+
+after_success:
+  - 'curl -H "Authorization: apiToken 2dc3158e-573f-40b9-aeb4-92513383db00" -H 'Content-Type: application/json' -d "{\"projectId\": \"56232f8f1895ca44741e705e\"}" https://api.shippable.com/workflow/triggerBuild'
+  - 'curl -H "Authorization: apiToken 2dc3158e-573f-40b9-aeb4-92513383db00" -H 'Content-Type: application/json' -d "{\"projectId\": \"56232f8f1895ca44741e7058\"}" https://api.shippable.com/workflow/triggerBuild'
+
