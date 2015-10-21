@@ -333,7 +333,6 @@ function wake_up( bearerToken, vid, cb ) {
 exports.wake_up = wake_up;
 
 function open_charge_port( bearerToken, vid, cb ) {
-    console.log("teslams: opening the charge port");
     request( {
         method: 'POST', 
         gzip: true,
