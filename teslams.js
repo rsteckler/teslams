@@ -629,7 +629,7 @@ exports.TEMP_LO = TEMP_LO;
 
 var CLIMATE_OFF = 0;
 var CLIMATE_ON  = 1;
-function auto_conditioning( params, cb ) {
+function auto_conditioning(bearerToken, params, cb ) {
                 console.log("in conditioning");
     var vid = params.id;
     var state = params.climate;
@@ -640,7 +640,7 @@ function auto_conditioning( params, cb ) {
             method: 'POST',
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/auto_conditioning_start',
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+            headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
         }, function (error, response, body) { 
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
@@ -662,7 +662,7 @@ function auto_conditioning( params, cb ) {
             method: 'POST',
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/auto_conditioning_stop', 
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+            headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
         }, function (error, response, body) { 
             console.log("in off 1");
             if ((!!error) || (response.statusCode !== 200)) {
