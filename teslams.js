@@ -630,7 +630,6 @@ exports.TEMP_LO = TEMP_LO;
 var CLIMATE_OFF = 0;
 var CLIMATE_ON  = 1;
 function auto_conditioning(bearerToken, params, cb ) {
-                console.log("in conditioning");
     var vid = params.id;
     var state = params.climate;
     if (state == CLIMATE_ON) { state = true; }
@@ -657,14 +656,12 @@ function auto_conditioning(bearerToken, params, cb ) {
             }
         });
     } else if (state == "stop" || state === false || state == "off"  ) {
-            console.log("in off");
         request( {
             method: 'POST',
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/auto_conditioning_stop', 
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
         }, function (error, response, body) { 
-            console.log("in off 1");
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
@@ -673,7 +670,6 @@ function auto_conditioning(bearerToken, params, cb ) {
             } catch (err) {
                 return report2('auto_conditioning_stop', body, cb);
             }
-                        console.log("in off2");
 
             if (typeof cb == 'function') {
                 return cb( null, data.response );  
