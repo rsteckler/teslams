@@ -81,7 +81,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
         var data;
         try { data = JSONbig.parse(body); } 
         catch(err) { 
-            return cb("Error getting vehicle tokens.  Login failed.");
+            return cb(401);
         }
         
         if (!util.isArray(data.response)) {
@@ -793,7 +793,8 @@ exports.stream = function(options, cb, cbData) {
             auth   :
             { user : options.email,
               pass : options.password
-            }
+            },
+            timeout: 60000
           }, cb).on('data', cbData);
 };
 
