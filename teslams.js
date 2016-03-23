@@ -570,6 +570,39 @@ exports.door_lock = door_lock;
 exports.LOCK_OFF = LOCK_OFF;
 exports.LOCK_ON = LOCK_ON;
 
+var VALET_OFF = false;
+var VALET_ON  = true;
+function valet( bearerToken, params, cb ) {
+    var vid = params.id;
+    var state = params.newState;
+    request( {
+        method: 'POST',
+        gzip: true,
+        url: portal + '/vehicles/' + vid + '/command/set_valet_mode', 
+        headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+        form: {
+            "on" : state,
+        }
+    }, function (error, response, body) { 
+        if ((!!error) || (response.statusCode !== 200)) {
+            return report(error, response, body, cb);
+        }
+        try {
+            var data = JSON.parse(body); 
+        } catch (err) {
+            return report2('set_valet_mode', body, cb);
+        }
+        if (typeof cb == 'function') {
+            return cb( null, data.response );  
+        } else {
+            return true;
+        }
+    });
+}
+exports.valet = valet;
+exports.VALET_OFF = VALET_OFF;
+exports.VALET_ON = VALET_ON;
+
 var TEMP_HI = 32;
 var TEMP_LO = 17;
 function set_temperature( bearerToken, params, cb ) {
