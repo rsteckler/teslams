@@ -579,7 +579,7 @@ function valet( bearerToken, params, cb ) {
         method: 'POST',
         gzip: true,
         url: portal + '/vehicles/' + vid + '/command/set_valet_mode', 
-        headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+        headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
         form: {
             "on" : state,
         }
