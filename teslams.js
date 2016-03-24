@@ -402,7 +402,7 @@ exports.CHARGE_ON = CHARGE_ON;
 
 var RANGE_STD    = 0; // changes range mode to STANDARD without effecting charge state
 var RANGE_MAX    = 1; // changes range mode to MAX_RANGE without effecting charge state
-function charge_range( params, cb ) {
+function charge_range( bearerToken, params, cb ) {
     var vid = params.id;
     var range = params.range;
     var percent = params.percent;
@@ -417,7 +417,7 @@ function charge_range( params, cb ) {
             method: 'POST', 
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/charge_' + range, 
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+            headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
         }, function (error, response, body) { 
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
@@ -438,7 +438,7 @@ function charge_range( params, cb ) {
             method: 'POST', 
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/set_charge_limit', 
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
+            headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
             form: { 
                 "percent" : percent.toString()
             }
