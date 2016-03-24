@@ -332,11 +332,15 @@ function wake_up( bearerToken, vid, cb ) {
 }
 exports.wake_up = wake_up;
 
-function open_charge_port( bearerToken, vid, cb ) {
+function open_charge_port( bearerToken, open, vid, cb ) {
+    var stateRequested = 'open';
+    if (!open) {
+        stateRequested = 'close';
+    }
     request( {
         method: 'POST', 
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/command/charge_port_door_open', 
+        url: portal + '/vehicles/' + vid + '/command/charge_port_door_' + stateRequested, 
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
     }, function (error, response, body) { 
         if ((!!error) || (response.statusCode !== 200)) {
