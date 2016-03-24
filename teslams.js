@@ -359,7 +359,7 @@ exports.open_charge_port = open_charge_port;
 
 var CHARGE_OFF   = 0; // changes charge state to ON without effecting range mode
 var CHARGE_ON    = 1; // changes charge state to OFF without effecting range mode
-function charge_state( params, cb ) {
+function charge_state( bearerToken, params, cb ) {
     var vid = params.id;
     var state = params.charge;
     // Change the range mode if necessary
@@ -375,7 +375,7 @@ function charge_state( params, cb ) {
             method: 'POST', 
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/charge_' + state, 
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
+            headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
         }, function (error, response, body) { 
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
