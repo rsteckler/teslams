@@ -332,6 +332,34 @@ function wake_up( bearerToken, vid, cb ) {
 }
 exports.wake_up = wake_up;
 
+function remote_start( bearerToken, password, vid, cb ) {
+    request( { 
+        method: 'POST', 
+        gzip: true,
+        url: portal + '/vehicles/' + vid + '/command/remote_start_drive', 
+        headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
+        form: { 
+            "password" : password
+        }
+
+    }, function (error, response, body) { 
+        if ((!!error) || (response.statusCode !== 200)) {
+            return report(error, response, body, cb);
+        }
+        try {
+            var data = JSON.parse(body); 
+        } catch (err) {
+            return report2('remote_start_drive', body, cb);
+        }
+        if (typeof cb == 'function') {
+            return cb( null, data.response );  
+        } else {
+            return true;
+        }
+    });
+}
+exports.remote_start = remote_start;
+
 function open_charge_port( bearerToken, open, vid, cb ) {
     var stateRequested = 'open';
     if (!open) {
