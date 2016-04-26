@@ -859,7 +859,8 @@ exports.stream = function(options, cb, cbData) {
             { user : options.email,
               pass : options.password
             },
-            timeout: 60000
+            timeout: 60000,
+            agent: false
           }, cb).on('data', cbData);
 };
 
