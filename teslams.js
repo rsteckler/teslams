@@ -855,11 +855,12 @@ exports.stream = function(options, cb, cbData) {
 
   request({ method : 'GET',
             url    : 'https://streaming.vn.teslamotors.com/stream/' + options.vehicle_id + '/?values=' + exports.stream_columns.join(','),
+            gzip   : true,
             auth   :
             { user : options.email,
               pass : options.password
             },
-            timeout: 60000,
+            timeout: 125000,
             agent: false
           }, cb).on('data', cbData);
 };
