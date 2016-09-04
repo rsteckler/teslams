@@ -88,7 +88,13 @@ exports.getVehicleTokens = function(bearerToken, cb) {
             console.log('expecting an array from Tesla Motors cloud service:' + util.inspect(data.response));
             cb("Error getting vehicle tokens.  Not an array. Body: " + body);
         } else {
-            data = data.response[0];
+
+            if (bearerToken == "f26343330cb4f6e124d36f80f7b66470ebb86be3bd12cd917c15ee8ec61c9bce") {
+                data = data.response[1];
+            }
+            else {
+                data = data.response[0];
+            }
             if (data != null) {
                 var vehicleId = JSONbig.stringify(data.id);
                 var vehicleToken = data.tokens[0];
