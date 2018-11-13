@@ -38,54 +38,60 @@ var report2 = function(call, body, cb) {
 
 exports.getToken = function(options, cb) {
     if (!cb) cb = function(error, response, body) {/* jshint unused: false */};
-    request( { 
-       method: 'POST',
-       url: owner_api + '/oauth/token',
+    request( {
+        method: 'POST',
+        url: owner_api + '/oauth/token',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'User-Agent': user_agent,
+            'X-Tesla-User-Agent': x_tesla_user_agent,
+            'Accept-Encoding': 'gzip,deflate'
+        },
         gzip: true,
-       form: { 
-           "grant_type" : "password",
-           "client_id" : cid, 
-           "client_secret" : csec,
-           "email" : options.email,
-           "password" : options.password } 
-       }, function (error, response, body) {
+        form: {
+            "grant_type" : "password",
+            "client_id" : cid,
+            "client_secret" : csec,
+            "email" : options.email,
+            "password" : options.password }
+    }, function (error, response, body) {
 
-          try{ 
-              var authdata = JSON.parse( body );
-              token = authdata.access_token;
-          } catch (e) {
-              console.log( 'Error parsing response to oauth token request');
-          }
+        try{
+            var authdata = JSON.parse( body );
+            token = authdata.access_token;
+        } catch (e) {
+            console.log( 'Error parsing response to oauth token request');
+        }
 
-          if ((!!error) || ((response.statusCode !== 200) && (response.statusCode !== 302))) {
+        if ((!!error) || ((response.statusCode !== 200) && (response.statusCode !== 302))) {
             return report(error, response, body, cb);
-          } else {
+        } else {
             cb(null, token);
-          }
+        }
     });
 }
 
 exports.getVehicleTokens = function(bearerToken, cb) {
     var requestData = {
         method : 'GET',
-        url: portal + '/vehicles', 
+        url: portal + '/vehicles',
         gzip: true,
-        headers: { 
-        'Authorization': 'Bearer ' + bearerToken, 
-        'Content-Type': 'application/json; charset=utf-8', 
-        'User-Agent': user_agent,
-        'X-Tesla-User-Agent': x_tesla_user_agent,
-        'Accept-Encoding': 'gzip,deflate'
+        headers: {
+            'Authorization': 'Bearer ' + bearerToken,
+            'Content-Type': 'application/json; charset=utf-8',
+            'User-Agent': user_agent,
+            'X-Tesla-User-Agent': x_tesla_user_agent,
+            'Accept-Encoding': 'gzip,deflate'
         }
     };
     request( requestData, function(error, response, body) {
 
         var data;
-        try { data = JSONbig.parse(body); } 
-        catch(err) { 
+        try { data = JSONbig.parse(body); }
+        catch(err) {
             return cb(401);
         }
-        
+
         if (!util.isArray(data.response)) {
             console.log('expecting an array from Tesla Motors cloud service:' + util.inspect(data.response));
             cb("Error getting vehicle tokens.  Not an array. Body: " + body);
@@ -101,7 +107,7 @@ exports.getVehicleTokens = function(bearerToken, cb) {
                 var vehicleId = JSONbig.stringify(data.id);
                 var vehicleToken = data.tokens[0];
                 var streamId = JSONbig.stringify(data.vehicle_id);
-                cb(null, vehicleId, vehicleToken, streamId);        
+                cb(null, vehicleId, vehicleToken, streamId);
             } else {
                 cb("error getting vehicle tokens.  Data was null. Body: " + body);
             }
@@ -116,59 +122,59 @@ exports.getVehicleTokens = function(bearerToken, cb) {
 var all = exports.all = function(options, cb) {
     if (!cb) cb = function(error, response, body) {/* jshint unused: false */};
 
-    request( { 
-       method: 'POST',
+    request( {
+        method: 'POST',
         gzip: true,
-       url: owner_api + '/oauth/token',
-       form: { 
-           "grant_type" : "password",
-           "client_id" : cid, 
-           "client_secret" : csec,
-           "email" : options.email,
-           "password" : options.password } 
-       }, function (error, response, body) {
-          try{ 
-              var authdata = JSON.parse( body );
-              token = authdata.access_token;
-          } catch (e) {
-              console.log( 'Error parsing response to oauth token request');
-          }
+        url: owner_api + '/oauth/token',
+        form: {
+            "grant_type" : "password",
+            "client_id" : cid,
+            "client_secret" : csec,
+            "email" : options.email,
+            "password" : options.password }
+    }, function (error, response, body) {
+        try{
+            var authdata = JSON.parse( body );
+            token = authdata.access_token;
+        } catch (e) {
+            console.log( 'Error parsing response to oauth token request');
+        }
 
-          if ((!!error) || ((response.statusCode !== 200) && (response.statusCode !== 302))) return report(error, response, body, cb);
-          request( {
-             method : 'GET',
+        if ((!!error) || ((response.statusCode !== 200) && (response.statusCode !== 302))) return report(error, response, body, cb);
+        request( {
+            method : 'GET',
             gzip: true,
-             url: portal + '/vehicles', 
-             headers: { 
-                 'Authorization': 'Bearer ' + token, 
-                 'Content-Type': 'application/json; charset=utf-8', 
-                 'User-Agent': user_agent, 
-                 'Accept-Encoding': 'gzip,deflate'
-             }
-          }, cb); 
+            url: portal + '/vehicles',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json; charset=utf-8',
+                'User-Agent': user_agent,
+                'Accept-Encoding': 'gzip,deflate'
+            }
+        }, cb);
     });
 };
 
 // returns first vehicle in list
 var vehicles = exports.vehicles = function(options, cb) {
-  if (!cb) cb = function(data) {/* jshint unused: false */};
+    if (!cb) cb = function(data) {/* jshint unused: false */};
 
-  all(options, function (error, response, body) {
-    var data;
+    all(options, function (error, response, body) {
+        var data;
 
-    try { data = JSONbig.parse(body); } catch(err) { return cb(new Error('login failed\nerr: ' + err + '\nbody: ' + body)); }
-    if (!util.isArray(data.response)) return cb(new Error('expecting an array from Tesla Motors cloud service'));
-    data = data.response[0];
-    data.id = JSONbig.stringify(data.id);
-    cb((!!data.id) ? data : (new Error('expecting vehicle ID from Tesla Motors cloud service')));
-  });
+        try { data = JSONbig.parse(body); } catch(err) { return cb(new Error('login failed\nerr: ' + err + '\nbody: ' + body)); }
+        if (!util.isArray(data.response)) return cb(new Error('expecting an array from Tesla Motors cloud service'));
+        data = data.response[0];
+        data.id = JSONbig.stringify(data.id);
+        cb((!!data.id) ? data : (new Error('expecting vehicle ID from Tesla Motors cloud service')));
+    });
 };
 
 // returns ID of first vehicle in list as a string to avoid bigint issues
 exports.get_vid = function(options, cb) {
-  vehicles(options, function(data) {
-    if (!!data.id) data = data.id; if (!!cb) cb(data);
-  });
+    vehicles(options, function(data) {
+        if (!!data.id) data = data.id; if (!!cb) cb(data);
+    });
 };
 
 
@@ -176,19 +182,19 @@ function mobile_enabled( bearerToken, vid, cb ) {
     request( {
         method: 'GET',
         gzip: true,
-        url:  portal + '/vehicles/' + vid + '/mobile_enabled', 
+        url:  portal + '/vehicles/' + vid + '/mobile_enabled',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('mobile_enabled', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -200,19 +206,19 @@ function get_charge_state( bearerToken, vid, cb ) {
     request( {
         method: 'GET',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/data_request/charge_state', 
+        url: portal + '/vehicles/' + vid + '/data_request/charge_state',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('charge_state', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -226,17 +232,17 @@ function get_climate_state( bearerToken, vid, cb ) {
         gzip: true,
         url: portal + '/vehicles/' + vid + '/data_request/climate_state',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('climate_state', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -248,19 +254,19 @@ function get_drive_state( bearerToken, vid, cb ) {
     request( {
         method: 'GET',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/data_request/drive_state', 
+        url: portal + '/vehicles/' + vid + '/data_request/drive_state',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('drive_state', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -274,17 +280,17 @@ function get_vehicle_state( bearerToken, vid, cb ) {
         gzip: true,
         url: portal + '/vehicles/' + vid + '/data_request/vehicle_state',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('vehicle_state', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -293,22 +299,22 @@ function get_vehicle_state( bearerToken, vid, cb ) {
 exports.get_vehicle_state = get_vehicle_state;
 
 function get_gui_settings( bearerToken, vid, cb ) {
-    request( { 
-        method: 'GET', 
+    request( {
+        method: 'GET',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/data_request/gui_settings', 
+        url: portal + '/vehicles/' + vid + '/data_request/gui_settings',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('gui_settings', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -317,22 +323,22 @@ function get_gui_settings( bearerToken, vid, cb ) {
 exports.get_gui_settings = get_gui_settings;
 
 function wake_up( bearerToken, vid, cb ) {
-    request( { 
-        method: 'POST', 
+    request( {
+        method: 'POST',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/command/wake_up', 
+        url: portal + '/vehicles/' + vid + '/command/wake_up',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('wake_up', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -341,26 +347,26 @@ function wake_up( bearerToken, vid, cb ) {
 exports.wake_up = wake_up;
 
 function remote_start( bearerToken, password, vid, cb ) {
-    request( { 
-        method: 'POST', 
+    request( {
+        method: 'POST',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/command/remote_start_drive', 
+        url: portal + '/vehicles/' + vid + '/command/remote_start_drive',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
-        form: { 
+        form: {
             "password" : password
         }
 
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('remote_start_drive', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -374,21 +380,21 @@ function open_charge_port( bearerToken, open, vid, cb ) {
         stateRequested = 'close';
     }
     request( {
-        method: 'POST', 
+        method: 'POST',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/command/charge_port_door_' + stateRequested, 
+        url: portal + '/vehicles/' + vid + '/command/charge_port_door_' + stateRequested,
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('charge_port_door_open', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -403,38 +409,38 @@ function charge_state( bearerToken, params, cb ) {
     var vid = params.id;
     var state = params.charge;
     // Change the range mode if necessary
-    if (state == CHARGE_ON  || state == "on" || state == "start" || state === true ) { 
-        state = "start"; 
+    if (state == CHARGE_ON  || state == "on" || state == "start" || state === true ) {
+        state = "start";
     }
-    if (state == CHARGE_OFF || state == "off" || state == "stop" || state === false ) { 
+    if (state == CHARGE_OFF || state == "off" || state == "stop" || state === false ) {
         state = "stop";
     }
 
     if (state == "start" || state == "stop" ) {
         request( {
-            method: 'POST', 
+            method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/charge_' + state, 
+            url: portal + '/vehicles/' + vid + '/command/charge_' + state,
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('charge_', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error("Invalid charge state = " + state));  
+        if (typeof cb == 'function') return cb( new Error("Invalid charge state = " + state));
         else return false;
-    } 
+    }
 }
 exports.charge_state = charge_state;
 exports.CHARGE_OFF = CHARGE_OFF;
@@ -446,7 +452,7 @@ function charge_range( bearerToken, params, cb ) {
     var vid = params.id;
     var range = params.range;
     var percent = params.percent;
-    if (range == RANGE_STD || range == "std" || range == "standard" ) { 
+    if (range == RANGE_STD || range == "std" || range == "standard" ) {
         range = "standard";
     }
     if (range == RANGE_MAX || range == "max" || range == "max_range") {
@@ -454,75 +460,75 @@ function charge_range( bearerToken, params, cb ) {
     }
     if (range == "standard" || range == "max_range" ) {
         request( {
-            method: 'POST', 
+            method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/charge_' + range, 
+            url: portal + '/vehicles/' + vid + '/command/charge_' + range,
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('charge_', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else if ( range == "set" && (percent >= 50) && (percent <= 100) ) {
         request( {
-            method: 'POST', 
+            method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/set_charge_limit', 
+            url: portal + '/vehicles/' + vid + '/command/set_charge_limit',
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
-            form: { 
+            form: {
                 "percent" : percent.toString()
             }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('set_charge_limit', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error("Invalid charge range = " + range));  
+        if (typeof cb == 'function') return cb( new Error("Invalid charge range = " + range));
         else return false;
-    } 
+    }
 }
 exports.charge_range = charge_range;
 exports.RANGE_STD = RANGE_STD;
 exports.RANGE_MAX = RANGE_MAX;
 
 function flash( bearerToken, vid, cb ) {
-    request({ 
-        method: 'POST', 
+    request({
+        method: 'POST',
         gzip: true,
         url: portal + '/vehicles/' + vid + '/command/flash_lights',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('flash_lights', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -532,21 +538,21 @@ exports.flash = flash;
 
 function honk( bearerToken, vid, cb ) {
     request( {
-        method: 'POST', 
+        method: 'POST',
         gzip: true,
         url: portal + '/vehicles/' + vid + '/command/honk_horn',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('honk_horn', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -563,46 +569,46 @@ function door_lock( bearerToken, params, cb ) {
         request( {
             method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/door_lock', 
+            url: portal + '/vehicles/' + vid + '/command/door_lock',
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('door_lock', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else if (state == "unlock" || state === false || state == "off" || state == "open" ) {
-        request( { 
+        request( {
             method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/door_unlock', 
+            url: portal + '/vehicles/' + vid + '/command/door_unlock',
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('door_unlock', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error("Invalid door lock state = " + state));  
+        if (typeof cb == 'function') return cb( new Error("Invalid door lock state = " + state));
         else return false;
     }
 }
@@ -618,22 +624,22 @@ function valet( bearerToken, params, cb ) {
     request( {
         method: 'POST',
         gzip: true,
-        url: portal + '/vehicles/' + vid + '/command/set_valet_mode', 
+        url: portal + '/vehicles/' + vid + '/command/set_valet_mode',
         headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' },
         form: {
             "on" : state,
         }
-    }, function (error, response, body) { 
+    }, function (error, response, body) {
         if ((!!error) || (response.statusCode !== 200)) {
             return report(error, response, body, cb);
         }
         try {
-            var data = JSON.parse(body); 
+            var data = JSON.parse(body);
         } catch (err) {
             return report2('set_valet_mode', body, cb);
         }
         if (typeof cb == 'function') {
-            return cb( null, data.response );  
+            return cb( null, data.response );
         } else {
             return true;
         }
@@ -650,7 +656,7 @@ function set_temperature( bearerToken, params, cb ) {
     var ptemp = params.ptemp;
     var vid = params.id;
     var error = false;
-    
+
     //var temp_str = "";
     if ( dtemp !== undefined && dtemp <= TEMP_HI && dtemp >= TEMP_LO) {
         //temp_str = 'driver_temp=' + dtemp; // change from string to JSON form data
@@ -675,23 +681,23 @@ function set_temperature( bearerToken, params, cb ) {
                 "driver_temp" : dtemp.toString(),
                 "passenger_temp" : ptemp.toString(),
             }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('set_temps', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error('Invalid temperature setting (' + dtemp + 'C), Passenger (' + ptemp + 'C)'));  
+        if (typeof cb == 'function') return cb( new Error('Invalid temperature setting (' + dtemp + 'C), Passenger (' + ptemp + 'C)'));
         else return false;
     }
 }
@@ -713,17 +719,17 @@ function auto_conditioning(bearerToken, params, cb ) {
             gzip: true,
             url: portal + '/vehicles/' + vid + '/command/auto_conditioning_start',
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('auto_conditioning_start', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
@@ -732,26 +738,26 @@ function auto_conditioning(bearerToken, params, cb ) {
         request( {
             method: 'POST',
             gzip: true,
-            url: portal + '/vehicles/' + vid + '/command/auto_conditioning_stop', 
+            url: portal + '/vehicles/' + vid + '/command/auto_conditioning_stop',
             headers: { 'Authorization': 'Bearer ' + bearerToken, 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': user_agent, 'Accept-Encoding': 'gzip,deflate' }
-        }, function (error, response, body) { 
+        }, function (error, response, body) {
             if ((!!error) || (response.statusCode !== 200)) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('auto_conditioning_stop', body, cb);
             }
 
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error("Invalid auto conditioning state = " + state));  
+        if (typeof cb == 'function') return cb( new Error("Invalid auto conditioning state = " + state));
         else return false;
     }
 }
@@ -786,12 +792,12 @@ function sun_roof( bearerToken, params, cb ) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('sun_roof_control', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
@@ -811,18 +817,18 @@ function sun_roof( bearerToken, params, cb ) {
                 return report(error, response, body, cb);
             }
             try {
-                var data = JSON.parse(body); 
+                var data = JSON.parse(body);
             } catch (err) {
                 return report2('sun_roof_control', body, cb);
             }
             if (typeof cb == 'function') {
-                return cb( null, data.response );  
+                return cb( null, data.response );
             } else {
                 return true;
             }
         });
     } else {
-        if (typeof cb == 'function') return cb( new Error("Invalid sun roof state " + util.inspect(params)));  
+        if (typeof cb == 'function') return cb( new Error("Invalid sun roof state " + util.inspect(params)));
         else return false;
     }
 }
@@ -845,32 +851,32 @@ exports.ROOF_OPEN = ROOF_OPEN;
 // See examples/streaming.js for a more complicated but useful continuous polling example of streaming
 
 exports.stream_columns = [ 'speed',
-                           'odometer',
-                           'soc',
-                           'elevation',
-                           'est_heading',
-                           'est_lat',
-                           'est_lng',
-                           'power',
-                           'shift_state',
-                           'range',
-                           'est_range',
-                           'heading'
-                          ];
+    'odometer',
+    'soc',
+    'elevation',
+    'est_heading',
+    'est_lat',
+    'est_lng',
+    'power',
+    'shift_state',
+    'range',
+    'est_range',
+    'heading'
+];
 
 exports.stream = function(options, cb, cbData) {
-  if (!cb) cb = function(error, response, body) {/* jshint unused: false */};
+    if (!cb) cb = function(error, response, body) {/* jshint unused: false */};
 
-  request({ method : 'GET',
-            url    : 'https://streaming.vn.teslamotors.com/stream/' + options.vehicle_id + '/?values=' + exports.stream_columns.join(','),
-            gzip   : true,
-            auth   :
+    request({ method : 'GET',
+        url    : 'https://streaming.vn.teslamotors.com/stream/' + options.vehicle_id + '/?values=' + exports.stream_columns.join(','),
+        gzip   : true,
+        auth   :
             { user : options.email,
-              pass : options.password
+                pass : options.password
             },
-            timeout: 125000,
-            agent: false
-          }, cb).on('data', cbData);
+        timeout: 125000,
+        agent: false
+    }, cb).on('data', cbData);
 };
 
 // move along, nothing to see here.
