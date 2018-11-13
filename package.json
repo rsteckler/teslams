@@ -1,6 +1,6 @@
 {
   "name": "teslams",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Utilities for the Tesla Model S ",
   "dependencies": {
     "express": "= 3.*",
